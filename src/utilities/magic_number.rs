@@ -1,11 +1,4 @@
-#[derive(PartialEq, Debug)]
-pub enum FileType {
-    Csv,
-    Txt,
-    Unknown,
-    Jpeg,
-    Png,
-}
+
 
 #[cfg(test)]
 #[test]

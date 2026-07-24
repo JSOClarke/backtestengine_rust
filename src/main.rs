@@ -1,9 +1,16 @@
+mod data;
+
+mod loader;
+mod format;
 use std::error::Error;
 
-use backtestengine::{file_loader, utilities::magic_number::FileType};
+use crate::loader::loader::{FileType, data_loader};
+
 
 fn main() -> Result<(), Box<dyn Error>> {
     let ft = FileType::Csv;
-    file_loader(String::from("test_data/test_data_file_1.csv"), ft)?;
+    let path = String::from("test_1.csv"); 
+    let candles = data_loader( path,ft)?;
+    println!("{:?}", candles);
     Ok(())
 }
