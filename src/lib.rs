@@ -82,6 +82,32 @@ pub fn handle_csv(file: &mut File) -> Result<Vec<Candle>, Box<dyn Error>> {
 // Check that the header number count matches what the parser needs.
 pub fn check_header() {}
 
+// Turns csv fields into candles
+pub fn parse_candles(
+    fields: &mut Vec<Vec<u8>>,
+    candles: &mut Vec<Candle>,
+) -> Result<(), Box<dyn Error>> {
+    let field_0: String = String::from_utf8(fields[0].clone())?; // this field needs to be u64
+
+    let field_1: f64 = String::from_utf8(fields[1].clone())?.parse()?;
+    let field_2: f64 = String::from_utf8(fields[2].clone())?.parse()?; // this field needs to be u64
+    let field_3: f64 = String::from_utf8(fields[3].clone())?.parse()?; // this field needs to be u64
+    let field_4: f64 = String::from_utf8(fields[4].clone())?.parse()?; // this field needs to be u64
+    let field_5: f64 = String::from_utf8(fields[5].clone())?.parse()?; // this field needs to be u64
+    // dbg!(&field_5);
+
+    let candle: Candle = Candle {
+        date: field_0.clone(),
+        close: field_1.clone(),
+        volume: field_2.clone(),
+        open: field_3.clone(),
+        high: field_4.clone(),
+        low: field_5.clone(),
+    };
+    candles.push(candle);
+
+    Ok(())
+}
 pub fn parse_csv(
     chunk: &[u8],
     fields: &mut Vec<Vec<u8>>,
@@ -117,24 +143,7 @@ pub fn parse_csv(
                 }
             }
 
-            let field_0: String = String::from_utf8(fields[0].clone())?; // this field needs to be u64
-
-            let field_1: f64 = String::from_utf8(fields[1].clone())?.parse()?;
-            let field_2: f64 = String::from_utf8(fields[2].clone())?.parse()?; // this field needs to be u64
-            let field_3: f64 = String::from_utf8(fields[3].clone())?.parse()?; // this field needs to be u64
-            let field_4: f64 = String::from_utf8(fields[4].clone())?.parse()?; // this field needs to be u64
-            let field_5: f64 = String::from_utf8(fields[5].clone())?.parse()?; // this field needs to be u64
-            // dbg!(&field_5);
-
-            let candle: Candle = Candle {
-                date: field_0.clone(),
-                close: field_1.clone(),
-                volume: field_2.clone(),
-                open: field_3.clone(),
-                high: field_4.clone(),
-                low: field_5.clone(),
-            };
-            candles.push(candle);
+            parse_candles(fields, candles)?;
             fields.clear();
             continue;
         }
