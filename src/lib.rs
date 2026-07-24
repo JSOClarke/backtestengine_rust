@@ -88,7 +88,7 @@ pub fn parse_csv(
     candles: &mut Vec<Candle>,
     is_header: &mut bool,
 ) -> Result<(), Box<dyn Error>> {
-    println!("{:?}", chunk);
+    // println!("{:?}", chunk);
     for byte in chunk {
         if *is_header {
             if *byte == 10 {
