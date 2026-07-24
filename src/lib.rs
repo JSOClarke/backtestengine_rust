@@ -1,5 +1,6 @@
 // pub mod utilities;
 
+use std::usize;
 use std::{
     error::Error, fs::File, io::Read, num::ParseFloatError, path::Path, string::FromUtf8Error,
 };
@@ -32,8 +33,6 @@ pub struct Candle {
 
 pub fn file_loader(user_string: String, ft: FileType) -> Result<(), Box<dyn Error>> {
     let mut file = File::open(&user_string)?;
-    let mut ft_buffer = [0u8; 16];
-    file.read_exact(&mut ft_buffer)?;
     let mut result: Vec<Candle> = vec![];
 
     // let file_type = detect_magic_number(&ft_buffer);
@@ -59,6 +58,7 @@ pub fn handle_csv(file: &mut File) -> Result<Vec<Candle>, Box<dyn Error>> {
     let mut field: Vec<u8> = vec![];
     let mut candles: Vec<Candle> = vec![];
     let mut is_header: bool = true;
+    let expected_h_count: usize = 5;
 
     loop {
         let bytes_read = file.read(&mut buffer).unwrap();
@@ -73,6 +73,7 @@ pub fn handle_csv(file: &mut File) -> Result<Vec<Candle>, Box<dyn Error>> {
             &mut field,
             &mut candles,
             &mut is_header,
+            &expected_h_count,
         )?;
     }
     Ok(candles)
@@ -87,16 +88,10 @@ pub fn parse_csv(
     field: &mut Vec<u8>,
     candles: &mut Vec<Candle>,
     is_header: &mut bool,
+    expected_h_count: &usize,
 ) -> Result<(), Box<dyn Error>> {
     // println!("{:?}", chunk);
     for byte in chunk {
-        if *is_header {
-            if *byte == 10 {
-                *is_header = false;
-            }
-            continue;
-        }
-
         //comma split
         if *byte == 44 {
             fields.push(field.clone());
@@ -111,6 +106,17 @@ pub fn parse_csv(
         if *byte == 13 || *byte == 10 {
             fields.push(field.clone());
             field.clear();
+
+            if *is_header {
+                *is_header = false;
+                if fields.len() - 1 != *expected_h_count {
+                    return Err("incorrect number".into());
+                } else {
+                    fields.clear();
+                    continue;
+                }
+            }
+
             let field_0: String = String::from_utf8(fields[0].clone())?; // this field needs to be u64
 
             let field_1: f64 = String::from_utf8(fields[1].clone())?.parse()?;
