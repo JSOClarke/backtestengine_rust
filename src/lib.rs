@@ -96,12 +96,12 @@ pub fn parse_candles(
     // dbg!(&field_5);
 
     let candle: Candle = Candle {
-        date: field_0.clone(),
-        close: field_1.clone(),
-        volume: field_2.clone(),
-        open: field_3.clone(),
-        high: field_4.clone(),
-        low: field_5.clone(),
+        date: field_0,
+        close: field_1,
+        volume: field_2,
+        open: field_3,
+        high: field_4,
+        low: field_5,
     };
     candles.push(candle);
 
