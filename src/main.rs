@@ -1,16 +1,9 @@
-mod lib;
-use std::{fs::File, io::Read};
+use std::error::Error;
 
-use lib::dataloader;
+use backtestengine::{file_loader, utilities::magic_number::FileType};
 
-fn main() {
-    // let test_data = b"07/23/2026,$321.66,40840780,$321.73,$323.30,$319.35\n";
-    let mut file_handle = File::open("test_data/test_data_file_1.csv").unwrap();
-    let mut buffer = vec![];
-    file_handle.read_to_end(&mut buffer).unwrap();
-    
-  let candle_array = dataloader(&buffer);
-
-  println!("{:?}",candle_array);
-
+fn main() -> Result<(), Box<dyn Error>> {
+    let ft = FileType::Csv;
+    file_loader(String::from("test_data/test_data_file_1.csv"), ft)?;
+    Ok(())
 }
