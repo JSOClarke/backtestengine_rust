@@ -129,7 +129,7 @@ pub fn parse_csv(
             continue;
         }
         // newline split
-        if *byte == 13 || *byte == 10 {
+        if *byte == 10 {
             fields.push(field.clone());
             field.clear();
 
